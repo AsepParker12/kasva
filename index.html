@@ -3987,7 +3987,7 @@ setTimeout(end,n*1000+2500);
   function can(p){if(HB.rpc)return true;var u=me();return !!(u&&PERMS[u.r].indexOf(p)>=0);}
   function need(p){if(!can(p))forbid();}
   function isAdmin(){var u=me();return !!u&&u.r==='admin';}
-  function tabOk(t){if(t==='tema')return !!me();if(t==='member'&&!mbOn()&&!isAdmin())return false;return !!TAB_PERM[t]&&can(TAB_PERM[t]);}
+  function tabOk(t){if(t==='tema')return isAdmin();if(t==='member'&&!mbOn()&&!isAdmin())return false;return !!TAB_PERM[t]&&can(TAB_PERM[t]);}
   function norm(v){return String(v||'').trim().toLowerCase();}
   function validUser(u){return /^[a-z0-9._-]{3,20}$/.test(u);}
   function validSecret(p){return typeof p==='string'&&p.length>=4&&p.length<=32;}
