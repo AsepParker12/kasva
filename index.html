@@ -818,8 +818,6 @@ setTimeout(end,n*1000+2500);
     <div class="plist" id="kasList"></div>
     <div class="section-head"><h2>Cadangan data</h2></div>
     <div class="panel" id="bkBox"></div>
-    <div class="section-head"><h2 data-acc-def="0">Banyak kasir (mode pusat)</h2></div>
-    <div class="panel" id="hbBox"></div>
     <div class="section-head"><h2 data-acc-def="0">Layar pelanggan dan pantau</h2></div>
     <div class="panel" id="shBox"></div>
     <div class="section-head"><h2 data-acc-def="0">Reset data</h2></div>
@@ -4616,7 +4614,7 @@ setTimeout(end,n*1000+2500);
         +lgPw('lgPw2',T('Ulangi password atau PIN'))
         +err+('<button class="btn primary block" type="button" id="lgGo" data-act="lgOk">'+T('Buat akun dan masuk')+'</button>')
         +'<div class="pick-row" style="margin:10px 0 0"><button class="chip" type="button" data-act="setLang" data-v="id" aria-pressed="'+(LANG==='id')+'">Indonesia</button><button class="chip" type="button" data-act="setLang" data-v="en" aria-pressed="'+(LANG==='en')+'">English</button></div>'
-        +(shCan()?('<button class="pin-link" type="button" data-act="lgHub" style="display:block;margin-top:12px">'+T('Perangkat kasir? Sambung ke pusat')+'</button><button class="pin-link" type="button" data-act="lgView" style="display:block;margin-top:12px">'+T('Layar pelanggan / Pantau')+'</button>'):'');
+        +(shCan()?('<button class="pin-link" type="button" data-act="lgView" style="display:block;margin-top:12px">'+T('Layar pelanggan / Pantau')+'</button>'):'');
     }else if(mode==='hub'){
       h+=('<h2 id="lgTitle">'+T('Sambung ke pusat')+'</h2><p class="intro">'+T('Masukkan kode dan PIN dari tab Akun di perangkat pusat. Akun dan data toko akan dibawa dari sana.')+'</p>')
         +lgField('hbCode',T('Kode pusat (8 huruf/angka)'),('maxlength="9" autocapitalize="characters" placeholder="'+T('ABCD-EFGH')+'"'))
@@ -8677,7 +8675,7 @@ setTimeout(end,n*1000+2500);
   var HB_KEY='kasirku:hub',HQ_KEY='kasirku:hubq',HD_KEY='kasirku:hubdone',HB_CH=12000;
   var HB_SYNC=['saveProduct','deleteProducts','saveStore','saveSettings','saveUsers','saveShift','setStock','addStock','addExpense','deleteExpense','addRefund','saveMember','setAllMemberDisc','deleteMember','useKbCode','genKbCode','clearKbCodes','addKbPay','addSale','savePurchase','paySupplier','voidPurchase','saveSupplier','deleteSupplier'];
   var HB_RAW={};
-  function hbCfg(){try{var j=JSON.parse(localStorage.getItem(HB_KEY)||'null');return (j&&(j.role==='hub'||j.role==='sat')&&j.code)?j:null;}catch(e){return null;}}
+  function hbCfg(){try{localStorage.removeItem(HB_KEY);}catch(e){}return null;}
   function hbSave(c){try{if(c)localStorage.setItem(HB_KEY,JSON.stringify(c));else localStorage.removeItem(HB_KEY);}catch(e){}}
   function hbRole(){var c=hbCfg();return (STANDALONE&&!db&&c)?c.role:'';}
   function hbQ(){try{var a=JSON.parse(localStorage.getItem(HQ_KEY)||'[]');return Array.isArray(a)?a:[];}catch(e){return [];}}
