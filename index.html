@@ -488,7 +488,7 @@ kbd{font:600 11px var(--font-mono);background:var(--surface,#fff);border:1px sol
 @keyframes kvFadeOut{from{opacity:1}to{opacity:0}}
 @keyframes kvPopOut{from{opacity:1;transform:none}to{opacity:0;transform:scale(.92) translateY(14px)}}
 @keyframes kvDownOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(26px)}}
-html:not([data-anim="off"]) section[id^="view-"]:not([hidden]){animation:kvRise .34s cubic-bezier(.2,.8,.2,1) both}
+html:not([data-anim="off"]) section[id^="view-"]:not([hidden]){animation:kvRise .34s cubic-bezier(.2,.8,.2,1) backwards}
 html:not([data-anim="off"]) .overlay:not([hidden]){animation:kvFade .24s ease both}
 html:not([data-anim="off"]) .overlay:not([hidden]) .modal{animation:kvPop .34s cubic-bezier(.2,.8,.2,1) both}
 html:not([data-anim="off"]) #receipt:not([hidden]) .rc{animation:kvUp .5s cubic-bezier(.2,.8,.2,1) both}
@@ -600,6 +600,7 @@ label.lbl{font-weight:600;letter-spacing:.01em}
 .bk-warn{background:var(--accent);color:var(--accent-ink)}
 .bk-warn .btn.primary{background:var(--brass);color:var(--brass-ink);border-color:var(--brass)}
 .bk-x{color:var(--accent-ink)}
+#payBtn:disabled{opacity:1!important;background:color-mix(in srgb,var(--accent) 45%,var(--paper))!important;border-color:transparent!important}
 @media(max-width:700px){.tab{min-height:40px!important;padding-top:0!important;padding-bottom:0!important}.brand h1{font-size:26px}}
 </style>
 </head>
