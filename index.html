@@ -622,7 +622,7 @@ label.lbl{font-weight:600;letter-spacing:.01em}
 </head>
 <body>
 <script>(function(){
-var d='4';try{d=localStorage.getItem('kasva:intro')||'4';if(sessionStorage.getItem('kasva:introDone'))d='off';}catch(e){}
+var d='4';try{d='3';if(sessionStorage.getItem('kasva:introDone'))d='off';}catch(e){}
 if(d!=='3'&&d!=='4'&&d!=='5')return;
 var n=+d,o=document.createElement('div');
 o.id='intro';o.style.cssText='position:fixed;left:0;top:0;right:0;bottom:0;z-index:99999;background:#fdfdfd;display:flex;align-items:center;justify-content:center;transition:opacity .35s';
@@ -1012,11 +1012,11 @@ setTimeout(end,n*1000+2500);
     return f<t?(m>=f&&m<t):(m>=f||m<t);
   }
   var FONTS={sys:T('Sistem (SF Pro di iPhone)'),mod:'Modern',ser:T('Klasik serif')};
-  function fontGet(){try{var v=localStorage.getItem('kasva:font');return FONTS[v]?v:'sys';}catch(e){return 'sys';}}
+  function fontGet(){try{var v=localStorage.getItem('kasva:font');return 'sys';}catch(e){return 'sys';}}
   function accPick(cur){var l=['klasik','marun','safir','emas'];if(l.indexOf(cur)<0&&ACC[cur]&&cur!=='gelap')l.push(cur);return l;}
   function themeApply(){
     var a=nightNow()?'gelap':accGet(),m=modeGet(),r=document.documentElement;
-    r.setAttribute('data-anim',(function(){try{return localStorage.getItem('kasirku:anim')==='off'?'off':'on';}catch(e){return 'on';}})());
+    r.setAttribute('data-anim',(function(){try{return 'on';}catch(e){return 'on';}})());
     if(a==='tosca')r.removeAttribute('data-accent');else r.setAttribute('data-accent',a);
     r.setAttribute('data-theme','light');
     r.setAttribute('data-font',fontGet());
@@ -1045,23 +1045,20 @@ setTimeout(end,n*1000+2500);
   }
   function sfx(kind){
     try{
-      var c=sndGet();
-      if(kind==='ok'){if(c.vib&&navigator.vibrate)navigator.vibrate([40,40,40]);if(c.ok)sfxTone([[880,0,0.1],[1319,0.11,0.2]],0.2);}
-      else if(kind==='tap'){if(c.tap)sfxTone([[1500,0,0.03]],0.08);}
+      if(kind==='ok')sfxTone([[880,0,0.1],[1319,0.11,0.2]],0.2);
+      else if(kind==='tap')sfxTone([[1500,0,0.03]],0.08);
     }catch(e){}
   }
-  document.addEventListener('click',function(e){var t=e.target&&e.target.closest?e.target.closest('.tab,[data-act=add]'):null;if(t&&!t.disabled)sfx('tap');},true);
+  document.addEventListener('click',function(e){var t=e.target&&e.target.closest?e.target.closest('button,[data-act],[role=tab],.tab,.chip,.tile,summary,label.chip,a[href]'):null;if(t&&!t.disabled)sfx('tap');},true);
   function thExtra(){
     var sn=sndGet();
     function sw(k,on){return '<div class="pick-row"><button class="chip" type="button" data-act="thSnd" data-k="'+k+'" data-v="1" aria-pressed="'+on+('">'+T('Aktif')+'</button><button class="chip" type="button" data-act="thSnd" data-k="')+k+'" data-v="0" aria-pressed="'+(!on)+('">'+T('Mati')+'</button></div>');}
     var animOn=true;try{animOn=localStorage.getItem('kasirku:anim')!=='off';}catch(e){}
-    return ('<label class="lbl" style="margin-top:12px">'+T('Animasi')+'</label>')+sw('anim',animOn)+('<p class="hint" style="margin:6px 0 0">'+T('Efek halus saat membuka jendela, struk, dan pindah tab. Matikan jika HP terasa berat.')+'</p>')
+    return ''
       +('<label class="lbl" style="margin-top:12px">'+T('Mode gelap otomatis di malam hari')+'</label>')+sw('night',nightOn())
       +('<div class="form-row two" style="margin-top:8px"><div><label class="lbl" for="nightF">'+T('Mulai jam')+'</label><input class="field" type="time" id="nightF" value="')+nightT('f','18:00')+('"></div><div><label class="lbl" for="nightT">'+T('Sampai jam')+'</label><input class="field" type="time" id="nightT" value="')+nightT('t','06:00')+'"></div></div>'
       +('<p class="hint" style="margin:6px 0 0">'+T('Pada jam ini layar memakai tema Kasva Gelap, lalu kembali ke warna pilihan Anda.')+'</p>')
-      +('<label class="lbl" style="margin-top:12px">'+T('Suara saat bayar berhasil')+'</label>')+sw('ok',sn.ok)
-      +('<label class="lbl" style="margin-top:12px">'+T('Suara ketukan (tab dan tambah produk)')+'</label>')+sw('tap',sn.tap)
-      +('<label class="lbl" style="margin-top:12px">'+T('Getar saat bayar berhasil')+'</label>')+sw('vib',sn.vib);
+      +'';
   }
   function renderTh(){
     var el=$('#thBox');if(!el)return;
@@ -1069,12 +1066,10 @@ setTimeout(end,n*1000+2500);
     el.innerHTML=('<p class="hint" style="margin:0 0 10px">'+T('Pilihan ini berlaku untuk layar ini saja.')+'</p>')
       +'<label class="lbl">Bahasa / Language</label><div class="pick-row"><button class="chip" type="button" data-act="setLang" data-v="id" aria-pressed="'+(LANG==='id')+'">Indonesia</button><button class="chip" type="button" data-act="setLang" data-v="en" aria-pressed="'+(LANG==='en')+'">English</button></div>'
       +'<label class="lbl">'+T('Cetak struk otomatis setelah bayar')+'</label><div class="pick-row"><button class="chip" type="button" data-act="setAutoPrint" data-v="1" aria-pressed="'+apOn()+'">'+T('Ya')+'</button><button class="chip" type="button" data-act="setAutoPrint" data-v="0" aria-pressed="'+!apOn()+'">'+T('Tidak')+'</button></div><p class="hint" style="margin:6px 0 0">'+T('Hanya di PC. Struk langsung masuk ke layar cetak browser.')+'</p>'
-      +'<label class="lbl">'+T('Animasi pembuka')+'</label><div class="pick-row">'+[['off','Mati'],['3','3 detik'],['4','4 detik'],['5','5 detik']].map(function(r){return '<button class="chip" type="button" data-act="setIntro" data-v="'+r[0]+'" aria-pressed="'+(introGet()===r[0])+'">'+T(r[1])+'</button>';}).join('')+'</div><p class="hint" style="margin:6px 0 0">'+T('Tampil saat aplikasi dibuka. Ketuk layar untuk melewati.')+'</p>'
       +'<label class="lbl">'+T('Corak latar')+'</label><div class="pick-row">'+Object.keys(PATN).map(function(k){return '<button class="chip" type="button" data-act="setPat" data-v="'+k+'" aria-pressed="'+(patGet()===k)+'">'+T(PATN[k])+'</button>';}).join('')+'</div>'
       +(patGet()==='custom'?'<div class="pick-row" style="margin-top:8px"><button class="chip" type="button" data-act="patPick">'+T('Ganti gambar')+'</button><button class="chip" type="button" data-act="setPatFit" data-v="tile" aria-pressed="'+(patFit()==='tile')+'">'+T('Ulang kecil')+'</button><button class="chip" type="button" data-act="setPatFit" data-v="cover" aria-pressed="'+(patFit()==='cover')+'">'+T('Satu gambar penuh')+'</button></div>':'')
       +'<label class="lbl">'+T('Kekuatan corak')+'</label><div class="pick-row">'+Object.keys(PATI).map(function(k){return '<button class="chip" type="button" data-act="setPatI" data-v="'+k+'" aria-pressed="'+(patIGet()===k)+'">'+T(PATI[k][0])+'</button>';}).join('')+'</div>'
       +('<label class="lbl">'+T('Warna')+'</label><div class="pick-row">')+accPick(a).map(function(k){return '<button class="chip" type="button" data-act="thAcc" data-v="'+k+'" aria-pressed="'+(a===k)+'">'+ACC[k][0]+'</button>';}).join('')+'</div>'
-      +('<label class="lbl">'+T('Huruf')+'</label><div class="pick-row">')+Object.keys(FONTS).map(function(k){return '<button class="chip" type="button" data-act="thFont" data-v="'+k+'" aria-pressed="'+(fontGet()===k)+'">'+FONTS[k]+'</button>';}).join('')+'</div>'
       +('<label class="lbl">'+T('Tetap masuk di perangkat ini')+'</label><div class="pick-row"><button class="chip" type="button" data-act="stayMode" data-v="1" aria-pressed="')+stayOn()+('">'+T('Ya')+'</button><button class="chip" type="button" data-act="stayMode" data-v="0" aria-pressed="')+!stayOn()+('">'+T('Tidak')+'</button></div>')
       +('<p class="hint" style="margin:6px 0 0">'+T('Jika Ya, tidak perlu login lagi saat aplikasi dibuka. Nyalakan hanya di HP pribadi.')+'</p>')+thExtra();
   }
@@ -3766,7 +3761,7 @@ setTimeout(end,n*1000+2500);
     var n=normCode(code);if(!n)return null;
     return S.products.find(function(p){return p.barcode&&normCode(p.barcode)===n;})||null;
   }
-  function buzz(){try{if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
+  function buzz(){}
   function renderUnknown(){
     var n=$('#unknownNote');
     if(!S.unknown){n.hidden=true;n.innerHTML='';return;}
