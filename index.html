@@ -617,6 +617,15 @@ label.lbl{font-weight:600;letter-spacing:.01em}
 #bellBtn.bad{border-color:#C0362C}
 #topWarn{position:fixed!important;top:60px;right:10px;left:auto;width:min(380px,calc(100vw - 20px));z-index:80!important;display:none;flex-direction:column;gap:8px;max-height:70vh;overflow:auto}
 #topWarn.show{display:flex}
+/* layar pendek (HP miring): header tidak menempel, keranjang bisa digulir */
+@media (max-height:560px) and (min-width:700px){
+  .top{position:static}
+  .cart-panel{top:8px;max-height:calc(100vh - 16px)}
+  .cart-panel .paper{max-height:calc(100vh - 16px);overflow-y:auto;overscroll-behavior:contain}
+  .cart-panel .lines{overflow:visible;flex:none;max-height:none}
+  .cart-panel #payBtn{position:sticky;bottom:0;z-index:3}
+  #topWarn{top:12px}
+}
 #topWarn>*{border-radius:10px!important;box-shadow:0 14px 30px -14px rgba(0,0,0,.45);position:static!important;margin:0!important}
 </style>
 </head>
