@@ -1,78 +1,15 @@
 {
   "name": "Kasva",
   "short_name": "Kasva",
-  "description": "Mesin kasir dengan produk yang bisa diubah sendiri.",
-  "lang": "id",
+  "description": "Mesin kasir untuk toko",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#F1F9F7",
-  "theme_color": "#1D6B7C",
+  "background_color": "#F3F2EE",
+  "theme_color": "#F3F2EE",
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512-maskable.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
-  ],
-  "id": "./",
-  "dir": "ltr",
-  "orientation": "any",
-  "categories": [
-    "business",
-    "finance",
-    "productivity"
-  ],
-  "display_override": [
-    "standalone",
-    "minimal-ui"
-  ],
-  "prefer_related_applications": false,
-  "launch_handler": {
-    "client_mode": "focus-existing"
-  },
-  "shortcuts": [
-    {
-      "name": "Kasir",
-      "short_name": "Kasir",
-      "description": "Buka layar kasir",
-      "url": "./",
-      "icons": [
-        {
-          "src": "icon-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "shot-narrow-1.png",
-      "sizes": "540x960",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Layar kasir di HP"
-    },
-    {
-      "src": "shot-wide-1.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Layar kasir di tablet atau PC"
-    }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
