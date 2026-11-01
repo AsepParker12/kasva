@@ -1,6 +1,247 @@
 <!doctype html>
 <html lang="id" data-theme="light">
 <head>
+  
+<style id="kasva-redesign">
+/* KASVA MODERN UI */
+:root[data-accent="kasva"] {
+  --bg: #F4F8FA;
+  --surface: #FFFFFF;
+  --raised: #FFFFFF;
+  --ink: #172B4D;
+  --muted: #718096;
+  --line: #E3EBF0;
+  --accent: #167D89;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #DDF4EF;
+  --shadow: 0 5px 20px rgba(23,43,77,.06);
+}
+
+/* Dasar tampilan */
+body {
+  background: var(--bg);
+  letter-spacing: -.01em;
+}
+
+.wrap {
+  max-width: 1440px;
+}
+
+/* Header */
+.top {
+  background: linear-gradient(110deg,#172B55 0%,#176D7D 65%,#20B58D 100%);
+  color: #FFFFFF;
+  border: 0;
+  box-shadow: 0 4px 18px rgba(23,43,77,.14);
+}
+
+.top-in {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.brand h1 {
+  color: #FFFFFF;
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -.7px;
+}
+
+.brand p {
+  color: rgba(255,255,255,.75);
+}
+
+.tag {
+  color: #FFFFFF;
+  border-color: rgba(255,255,255,.35);
+}
+
+/* Navigasi tab lama */
+.tabs {
+  background: rgba(255,255,255,.13);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 14px;
+  padding: 4px;
+}
+
+.tab {
+  color: rgba(255,255,255,.82);
+  border-radius: 10px;
+  transition: .2s ease;
+}
+
+.tab[aria-selected="true"] {
+  background: #FFFFFF;
+  color: #176D7D;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+}
+
+/* Area konten */
+.main {
+  padding-top: 22px;
+}
+
+section {
+  scroll-margin-top: 90px;
+}
+
+/* Kartu dan panel */
+.tile,
+.sum-box,
+.login-box,
+.paper {
+  border-radius: 17px;
+  box-shadow: var(--shadow);
+}
+
+.tile {
+  border: 1px solid var(--line);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.tile:active {
+  transform: scale(.98);
+}
+
+.sum-box {
+  border: 1px solid var(--line);
+}
+
+/* Tombol */
+.btn {
+  border-radius: 12px;
+  font-weight: 700;
+  transition: transform .15s ease, opacity .15s ease;
+}
+
+.btn:active {
+  transform: scale(.97);
+}
+
+.btn.primary {
+  background: linear-gradient(110deg,#176D7D,#20A98D);
+  border-color: transparent;
+  color: #FFFFFF;
+}
+
+/* Input */
+.field {
+  border-radius: 12px;
+  border-color: var(--line);
+  background: #FFFFFF;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.field:focus {
+  border-color: #168B91;
+  box-shadow: 0 0 0 3px rgba(22,139,145,.12);
+  outline: none;
+}
+
+/* Kategori dan chip */
+.chip {
+  border-radius: 999px;
+  transition: .2s ease;
+}
+
+.chip[aria-pressed="true"] {
+  background: #176D7D;
+  border-color: #176D7D;
+  color: #FFFFFF;
+}
+
+/* Navigasi bawah yang sudah ada */
+#botNav {
+  background: rgba(255,255,255,.96);
+  border-top: 1px solid #E3EBF0;
+  box-shadow: 0 -5px 22px rgba(23,43,77,.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+#botNav button {
+  color: #82909F;
+  border-radius: 13px;
+  transition: .2s ease;
+}
+
+#botNav button[aria-current="page"] {
+  color: #167D89;
+  background: #E5F5F1;
+}
+
+#botNav svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Menu Lainnya */
+#moreSheet .ms-box {
+  border-radius: 24px 24px 0 0;
+  background: #FFFFFF;
+}
+
+#moreSheet .ms-grid button {
+  border-radius: 14px;
+}
+
+/* Login */
+.login-box {
+  border: 1px solid var(--line);
+  padding: 26px;
+}
+
+.login-box h2 {
+  color: #172B4D;
+}
+
+/* Responsif HP */
+@media (max-width: 699px) {
+  .top-in {
+    gap: 10px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .brand h1 {
+    font-size: 21px;
+  }
+
+  .main {
+    padding-top: 15px;
+    padding-bottom: 115px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 10px;
+  }
+
+  .tile {
+    border-radius: 14px;
+  }
+
+  .meta {
+    padding: 9px;
+  }
+
+  .btn {
+    min-height: 44px;
+  }
+
+  #botNav button {
+    min-width: 0;
+  }
+}
+
+/* Kurangi animasi jika pengguna memilihnya */
+@media (prefers-reduced-motion: reduce) {
+  .tile, .btn, .chip, #botNav button {
+    transition: none;
+  }
+}
+</style>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#FFFFFF">
