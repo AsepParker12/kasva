@@ -215,6 +215,19 @@ a.btn{display:inline-flex;align-items:center;justify-content:center;text-decorat
 .acc-adm .acc-t[aria-expanded="false"]::after{transform:rotate(-45deg);margin-bottom:0}
 .acc-adm .acc-t:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
 .acc-adm .acc-hid{display:none!important}
+.acc-adm .acc-bar{display:none!important}
+.acc-adm .acc-t{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:0 16px;min-height:54px;margin:8px 0!important;font-size:16px;font-weight:600}
+.acc-adm .acc-t::after,.acc-adm .acc-t[aria-expanded="false"]::after{margin:0 2px 0 auto;transform:rotate(-45deg);opacity:.5}
+.acc-adm .section-head>h2.acc-t{flex:1 1 auto;min-width:0}
+.acc-adm .acc-t:active{background:var(--raised,var(--line))}
+#accSheet{position:fixed;inset:0;z-index:60;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.45)}
+#accSheet.on{display:flex}
+#accSheet .as-panel{width:min(560px,100%);max-height:88vh;display:flex;flex-direction:column;background:var(--surface);color:var(--ink);border-radius:20px 20px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.25);padding-bottom:env(safe-area-inset-bottom,0px)}
+#accSheet .as-head{display:flex;align-items:center;gap:10px;padding:16px 18px 10px;border-bottom:1px solid var(--line)}
+#accSheet .as-head b{flex:1;font-size:18px}
+#accSheet .as-body{overflow-y:auto;overscroll-behavior:contain;padding:8px 18px 22px}
+#accSheet .as-body>.sub-h,#accSheet .as-body>.section-head{display:none}
+@media(min-width:700px){#accSheet{align-items:center}#accSheet .as-panel{border-radius:20px;max-height:86vh}}
 body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;display:none;background:var(--pat-color,var(--accent));opacity:var(--pat-op,.1);-webkit-mask-image:var(--pat-img);mask-image:var(--pat-img);-webkit-mask-size:var(--pat-sz,40px);mask-size:var(--pat-sz,40px);-webkit-mask-repeat:repeat;mask-repeat:repeat}
 html[data-pat] body::before{display:block}
 :root[data-accent="gelap"]{--pat-color:#7FE3C4}
@@ -9272,7 +9285,7 @@ setTimeout(end,n*1000+2500);
         ROOTS.forEach(function(r){
           var root=document.querySelector(r);if(!root)return;
           heads(root).forEach(function(it){
-            var g=group(it),open=isOpen(root,it.h,o);
+            var g=group(it),open=false;
             if(adm){
               it.h.classList.add('acc-t');it.h.setAttribute('role','button');it.h.setAttribute('tabindex','0');it.h.setAttribute('aria-expanded',String(open));
               g.forEach(function(e){e.classList.toggle('acc-hid',!open);});
@@ -9288,7 +9301,29 @@ setTimeout(end,n*1000+2500);
     function later(){clearTimeout(tm);tm=setTimeout(apply,60);}
     function toggle(h){
       var root=h.closest('section');if(!root||!isAdmin())return;
-      var o=st(),k=keyOf(root,h);o[k]=isOpen(root,h,o)?0:1;put(o);apply();
+      var it=null;heads(root).forEach(function(x){if(x.h===h)it=x;});
+      if(it)openSheet(h,group(it));
+    }
+    var SH=null,CUR=null;
+    function closeSheet(){
+      if(!SH||!CUR)return;
+      var nodes=[].slice.call(SH.querySelector('.as-body').children),h=CUR.h,ref=h;
+      nodes.forEach(function(n){if(n.parentNode!==CUR.src.parentNode||true){ref.parentNode.insertBefore(n,ref.nextSibling);ref=n;}n.classList.add('acc-hid');});
+      SH.classList.remove('on');CUR=null;later();
+    }
+    function openSheet(h,g){
+      if(!SH){
+        SH=document.createElement('div');SH.id='accSheet';
+        SH.innerHTML=('<div class="as-panel" role="dialog" aria-modal="true"><div class="as-head"><b></b><button class="btn primary" type="button" data-as-close="1">'+T('Selesai')+'</button></div><div class="as-body"></div></div>');
+        document.body.appendChild(SH);
+        SH.addEventListener('click',function(e){if(e.target===SH||e.target.closest('[data-as-close]'))closeSheet();});
+        document.addEventListener('keydown',function(e){if(e.key==='Escape'&&CUR)closeSheet();});
+      }
+      CUR={h:h,src:h};
+      SH.querySelector('b').textContent=(h.textContent||'').trim();
+      var body=SH.querySelector('.as-body');body.innerHTML='';
+      g.forEach(function(n){n.classList.remove('acc-hid');body.appendChild(n);});
+      body.scrollTop=0;SH.classList.add('on');
     }
     document.addEventListener('click',function(e){
       var h=e.target.closest&&e.target.closest('.acc-t');
