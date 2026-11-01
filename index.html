@@ -7,7 +7,21 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<style>:root{color-scheme:light;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>:root{color-scheme:light;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+/* kartu produk di Kasir: lebih ringkas, warna per produk, status stok jelas */
+html[data-soft="1"] .tile{border-radius:18px;transition:box-shadow .15s,transform .15s}
+html[data-soft="1"] .pic{aspect-ratio:16/10;font-size:30px;background:hsl(var(--h,200) 75% 93%)!important;color:hsl(var(--h,200) 55% 36%)!important}
+html[data-soft="1"][data-accent="malam"] .pic{background:hsl(var(--h,200) 35% 20%)!important;color:hsl(var(--h,200) 70% 75%)!important}
+html[data-soft="1"] .meta{padding:9px 12px 12px;gap:3px}
+html[data-soft="1"] .nm{min-height:2.5em;font-size:15px}
+html[data-soft="1"] .pr{font-weight:700;font-size:15px}
+.tile:has(.tile-main:disabled){background:var(--bg);box-shadow:none}
+.tile:has(.tile-main:disabled) .pic{filter:grayscale(1);opacity:.55}
+.stk{align-self:flex-start}
+.stk.out{background:var(--danger-soft);color:var(--danger);padding:2px 9px;border-radius:999px;font-weight:700}
+.stk.low{background:var(--warn-soft,rgba(245,158,11,.15));padding:2px 9px;border-radius:999px;font-weight:600}
+.tile:has(.tctl:not([hidden])){border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+</style>
 <title>Kasva</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
