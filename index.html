@@ -736,6 +736,17 @@ label.lbl{font-weight:600;letter-spacing:.01em}
   #moreSheet .ms-grid button[aria-current="page"]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
   #moreSheet .ms-grid svg{width:26px;height:26px;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 }
+
+/* layar kosong: ikon, judul, ajakan */
+.empty{display:flex;flex-direction:column;align-items:center;gap:6px;border:1px dashed var(--line);background:color-mix(in srgb,var(--accent-soft) 45%,transparent);border-radius:18px;padding:30px 20px 26px;text-align:center;color:var(--muted);line-height:1.5}
+.empty .ed-ico{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);margin-bottom:6px}
+.empty .ed-ico svg{width:30px;height:30px;stroke:var(--accent);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.empty strong{font-size:17px;margin:0}
+.empty .btn{margin-top:12px}
+.empty.ed-load .ed-ico svg{animation:edSpin 1s linear infinite}
+.modal .chip,.modal label.chip{max-width:100%;white-space:normal;height:auto;min-height:44px;line-height:1.35;padding-block:9px;text-align:left;border-radius:16px}
+@keyframes edSpin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.empty.ed-load .ed-ico svg{animation:none}}
 </style>
 </head>
 <body>
@@ -9497,6 +9508,73 @@ document.addEventListener('click',function(e){
 var tb=document.querySelector('.tabs');
 if(tb&&window.MutationObserver)new MutationObserver(upd).observe(tb,{attributes:true,subtree:true,childList:true,characterData:true});
 setInterval(upd,500);upd();
+})();
+</script>
+<script>
+(function(){
+var I={
+box:'<path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/>',
+receipt:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><path d="M9 8h6M9 12h6"/>',
+users:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.4 2.7-6 6-6s6 2.6 6 6"/><path d="M16 5.2a3 3 0 010 5.6M18 14.4c1.8.8 3 2.7 3 5.6"/>',
+clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+tag:'<path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="7.5" cy="8.5" r="1.2"/>',
+check:'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
+spin:'<path d="M21 12a9 9 0 11-3-6.7"/><path d="M21 4v5h-5"/>',
+search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',
+cart:'<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.2a1 1 0 001 .8h9.1a1 1 0 001-.8L20 8H6"/>'};
+function pick(t){
+ t=t.toLowerCase();
+ if(/memuat|loading/.test(t))return 'spin';
+ if(/tidak ada .*cocok|no .*match/.test(t))return 'search';
+ if(/stok.*(aman|atas)|semua.*laku|all stock|sold well/.test(t))return 'check';
+ if(/produk|barcode|product|pembelian|pemasok|purchase|supplier/.test(t))return 'box';
+ if(/kasbon|member|pelanggan|customer/.test(t))return 'users';
+ if(/akun|account/.test(t))return 'user';
+ if(/shift/.test(t))return 'clock';
+ if(/voucher|paket|promo|bundle/.test(t))return 'tag';
+ if(/penjualan|transaksi|refund|biaya|sales|transaction|expense/.test(t))return 'receipt';
+ return 'box';
+}
+var EN=false;try{EN=localStorage.getItem('kasva:lang')==='en';}catch(e){}
+function deco(e){
+ if(e.getAttribute('data-ed'))return;
+ e.setAttribute('data-ed','1');
+ var t=e.textContent||'',k=pick(t);
+ var ic=document.createElement('span');ic.className='ed-ico';
+ ic.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+I[k]+'</svg>';
+ e.insertBefore(ic,e.firstChild);
+ if(k==='spin')e.classList.add('ed-load');
+ /* tombol ajakan untuk layar yang tidak punya tombol sendiri */
+ if(!e.querySelector('button')&&(/belum ada (penjualan|transaksi)/i.test(t)||/no (sales|transactions)/i.test(t))){
+   var b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=EN?'Go to Cashier':'Buka Kasir';
+   b.addEventListener('click',function(){var x=document.querySelector('.tabs [role="tab"][id*="kasir"],.tabs [role="tab"][data-tab="kasir"]');if(x)x.click();scrollTo(0,0);});
+   e.appendChild(b);
+ }
+ /* tajuk untuk teks polos tanpa judul */
+ if(!e.querySelector('strong')){
+   var rest=[].slice.call(e.childNodes).filter(function(n){return n!==ic&&n.nodeType===3&&n.textContent.trim();});
+   if(rest.length===1&&rest[0].textContent.length<60){var st=document.createElement('strong');st.textContent=rest[0].textContent.trim();e.replaceChild(st,rest[0]);}
+ }
+}
+function guide(){
+ try{
+  var g=document.getElementById('grid');if(!g)return;
+  var t=g.querySelectorAll('.tile'),old=document.getElementById('edGuide');
+  var only=t.length>0;t.forEach(function(x){var pr=x.querySelector('.pr');if(!pr||!/seikhlasnya|pay what/i.test(pr.textContent))only=false;});
+  var adm=!!document.querySelector('[data-act="newProd"]');
+  if(!only||!adm){if(old)old.remove();return;}
+  if(old)return;
+  var d=document.createElement('div');d.id='edGuide';d.className='empty';d.setAttribute('data-ed','1');
+  d.innerHTML='<span class="ed-ico"><svg viewBox="0 0 24 24" aria-hidden="true">'+I.box+'</svg></span><strong>'+(EN?'Add your first product':'Tambah produk pertama')+'</strong>'+(EN?'Your product list is still empty. Add a name, price and stock, then it shows up here.':'Daftar produk masih kosong. Isi nama, harga, dan stok, lalu produknya muncul di sini.')+'<button class="btn primary" type="button" data-act="newProd">'+(EN?'Add product':'Tambah produk')+'</button>';
+  g.appendChild(d);
+ }catch(e){}
+}
+function scan(r){try{(r||document).querySelectorAll('.empty:not([data-ed])').forEach(deco);}catch(e){}guide();}
+var tm=null;
+function later(){clearTimeout(tm);tm=setTimeout(scan,50);}
+try{new MutationObserver(later).observe(document.body,{childList:true,subtree:true});}catch(e){}
+scan();
 })();
 </script>
 </body>
