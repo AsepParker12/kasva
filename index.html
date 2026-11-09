@@ -747,6 +747,58 @@ label.lbl{font-weight:600;letter-spacing:.01em}
 .modal .chip,.modal label.chip{max-width:100%;white-space:normal;height:auto;min-height:44px;line-height:1.35;padding-block:9px;text-align:left;border-radius:16px}
 @keyframes edSpin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.empty.ed-load .ed-ico svg{animation:none}}
+
+/* ===== gaya AMV: potongan cepat saat pindah tab ===== */
+@keyframes kvCut{0%{opacity:0;transform:translateX(26px) scale(1.035);filter:blur(7px) saturate(1.7)}55%{opacity:1;filter:blur(0) saturate(1.15)}100%{opacity:1;transform:none;filter:none}}
+html:not([data-anim="off"]) section[id^="view-"]:not([hidden]){animation:kvCut .32s cubic-bezier(.16,1,.3,1) backwards}
+/* ===== Dynamic Island: pengganti toast ===== */
+#toast{display:none!important}
+#dynIsland{position:fixed;z-index:99980;top:calc(8px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%) scale(.6);opacity:0;pointer-events:none;background:#000;color:#fff;border-radius:999px;overflow:hidden;width:112px;height:34px;box-shadow:0 10px 30px -8px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.08);transition:none}
+#dynIsland.meas{visibility:hidden;opacity:0;left:0!important;transform:none!important;width:max-content!important;height:auto!important;max-width:min(92vw,420px);transition:none!important}
+#dynIsland.on{opacity:1;transform:translateX(-50%) scale(1);transition:width .55s cubic-bezier(.34,1.45,.64,1),height .55s cubic-bezier(.34,1.45,.64,1),transform .45s cubic-bezier(.34,1.45,.64,1),opacity .2s,border-radius .5s}
+#dynIsland.off{opacity:0;transform:translateX(-50%) scale(.7);transition:width .32s cubic-bezier(.7,0,.3,1),transform .32s cubic-bezier(.7,0,.3,1),opacity .28s ease .08s}
+#dynIsland .di-in{display:flex;align-items:center;gap:10px;padding:9px 18px 9px 10px;opacity:0;transform:scale(.9);transition:opacity .22s ease,transform .3s ease}
+#dynIsland.on .di-in{opacity:1;transform:none;transition-delay:.16s}
+#dynIsland.off .di-in{opacity:0;transition-delay:0s}
+#dynIsland .di-ic{flex:0 0 26px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.14)}
+#dynIsland .di-ic svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+#dynIsland.ok .di-ic{background:#22c55e}
+#dynIsland.bad .di-ic{background:#f59e0b}
+#dynIsland.info .di-ic{background:var(--accent,#ff6a1f)}
+#dynIsland .di-tx{font:600 14px/1.3 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;overflow-wrap:anywhere}
+@media (prefers-reduced-motion:reduce){#dynIsland.on,#dynIsland.off{transition:opacity .2s}}
+
+/* ===== animasi masuk dan keluar saat ditekan, gaya AMV ===== */
+@keyframes kvFade{0%{opacity:0}35%{opacity:1;filter:brightness(1.5)}100%{opacity:1;filter:none}}
+@keyframes kvPop{0%{opacity:0;transform:scale(1.22) translateY(-8px) skewX(-3deg);filter:blur(9px) brightness(1.8)}55%{opacity:1;transform:scale(.975) skewX(.6deg);filter:blur(0) brightness(1.06)}100%{opacity:1;transform:none;filter:none}}
+@keyframes kvPopOut{from{opacity:1;transform:none;filter:none}to{opacity:0;transform:scale(1.14);filter:blur(8px) brightness(1.7)}}
+@keyframes kvFadeOut{from{opacity:1}to{opacity:0}}
+@keyframes kvUp{0%{opacity:0;transform:translateY(80px) rotate(-1.6deg) scale(.96);filter:blur(6px)}60%{opacity:1;transform:translateY(-7px) rotate(.4deg);filter:blur(0)}100%{opacity:1;transform:none;filter:none}}
+@keyframes kvSlide{0%{opacity:0;transform:translateX(34px) scale(1.03);filter:blur(6px)}100%{opacity:1;transform:none;filter:none}}
+@keyframes kvSheet{0%{opacity:.4;transform:translateY(60px) scale(.98);filter:blur(5px)}60%{opacity:1;transform:translateY(-6px);filter:blur(0)}100%{opacity:1;transform:none;filter:none}}
+@keyframes tapRing{from{transform:scale(.4);opacity:.9}to{transform:scale(8);opacity:0}}
+@keyframes tapDot{from{transform:scale(1.6);opacity:.95}to{transform:scale(0);opacity:0}}
+html:not([data-anim="off"]) .overlay:not([hidden]){animation:kvFade .3s ease both}
+html:not([data-anim="off"]) .overlay:not([hidden]) .modal{animation:kvPop .38s cubic-bezier(.2,.9,.3,1) both}
+html:not([data-anim="off"]) #receipt:not([hidden]) .rc{animation:kvUp .52s cubic-bezier(.2,.9,.3,1) both}
+html:not([data-anim="off"]) .swap-in{animation:kvSlide .32s cubic-bezier(.16,1,.3,1)}
+html:not([data-anim="off"]) #accSheet.on .as-panel,html:not([data-anim="off"]) #moreSheet.show .ms-box{animation:kvSheet .42s cubic-bezier(.2,.9,.3,1) both}
+html:not([data-anim="off"]) #topWarn.show>*{animation:kvPop .36s cubic-bezier(.2,.9,.3,1) both}
+html:not([data-anim="off"]) .ghost-out.overlay:not([hidden]){animation:kvFadeOut .2s ease-in both!important}
+html:not([data-anim="off"]) .ghost-out.overlay:not([hidden]) .modal,html:not([data-anim="off"]) .ghost-out.overlay:not([hidden]) .rc{animation:kvPopOut .2s cubic-bezier(.6,0,.9,.4) both!important}
+html:not([data-anim="off"]) button:not(:disabled):active,html:not([data-anim="off"]) .tile:active,html:not([data-anim="off"]) .chip:active{transform:scale(.94);transition:transform .06s}
+.tapring{position:fixed;z-index:99970;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;border:2px solid var(--accent,#ff6a1f);pointer-events:none;animation:tapRing .46s cubic-bezier(.1,.8,.2,1) forwards}
+.tapring::after{content:"";position:absolute;inset:2px;border-radius:50%;background:var(--accent,#ff6a1f);animation:tapDot .28s ease-out forwards}
+@media(max-width:699px){
+  .cart-panel{transition:transform .26s cubic-bezier(.7,0,.9,.4),visibility 0s linear .26s}
+  .cart-panel.open{transition:transform .46s cubic-bezier(.18,1.1,.3,1),visibility 0s}
+}
+@media (prefers-reduced-motion:reduce){.tapring{display:none}}
+/* ===== navigasi bawah melayang seperti pulau ===== */
+@media(max-width:699px){
+  :root{--navh:calc(90px + env(safe-area-inset-bottom,0px))}
+  #botNav{left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));border-radius:30px;border:1px solid var(--line);background:color-mix(in srgb,var(--surface) 86%,transparent);-webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5);box-shadow:0 16px 36px -14px rgba(0,0,0,.5);padding:6px}
+}
 </style>
 </head>
 <body>
@@ -9575,6 +9627,64 @@ var tm=null;
 function later(){clearTimeout(tm);tm=setTimeout(scan,50);}
 try{new MutationObserver(later).observe(document.body,{childList:true,subtree:true});}catch(e){}
 scan();
+})();
+</script>
+<script>
+(function(){
+var IC={ok:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',bad:'<path d="M12 7v6M12 17h.01"/>',info:'<path d="M12 11v6M12 7h.01"/>'};
+var isl=document.createElement('div');isl.id='dynIsland';isl.setAttribute('role','status');isl.setAttribute('aria-live','polite');
+isl.innerHTML='<div class="di-in"><span class="di-ic"><svg viewBox="0 0 24 24" aria-hidden="true"></svg></span><span class="di-tx"></span></div>';
+document.body.appendChild(isl);
+var ic=isl.querySelector('svg'),tx=isl.querySelector('.di-tx'),tm=null,tm2=null;
+function kind(m){
+ m=m.toLowerCase();
+ if(/gagal|tidak bisa|tidak dapat|salah|error|ditolak|habis|kurang|belum|wajib|failed|invalid|not |cannot|expired|berakhir/.test(m))return 'bad';
+ if(/berhasil|tersimpan|disimpan|selesai|lunas|ditambah|dihapus|dikirim|tersalin|disalin|dibuka|ditutup|diperbarui|saved|success|done|copied|added|deleted|updated|sent/.test(m))return 'ok';
+ return 'info';
+}
+function show(m){
+ clearTimeout(tm);clearTimeout(tm2);
+ var k=kind(m);
+ isl.className='';isl.classList.add(k);
+ ic.innerHTML=IC[k];tx.textContent=m;
+ isl.style.width='';isl.style.height='';
+ isl.classList.add('meas');
+ var r=isl.getBoundingClientRect(),w=Math.ceil(r.width),h=Math.ceil(r.height);
+ isl.classList.remove('meas');
+ isl.style.width='112px';isl.style.height='34px';
+ void isl.offsetWidth;
+ isl.classList.add('on');
+ isl.style.width=w+'px';isl.style.height=h+'px';
+ isl.style.borderRadius=(h>44?'26px':'999px');
+ tm=setTimeout(hide,Math.min(5200,2300+m.length*35));
+}
+function hide(){
+ isl.classList.remove('on');isl.classList.add('off');
+ isl.style.width='112px';isl.style.height='34px';
+ tm2=setTimeout(function(){isl.classList.remove('off');},420);
+}
+isl.addEventListener('click',function(){clearTimeout(tm);hide();});
+isl.style.pointerEvents='none';
+var T=document.getElementById('toast');
+if(T){
+ var last='';
+ new MutationObserver(function(){
+  var m=(T.textContent||'').trim();
+  if(!T.hidden&&m){show(m);}
+ }).observe(T,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:['hidden']});
+}
+
+/* cincin dampak saat menekan */
+document.addEventListener('pointerdown',function(e){
+ try{
+  if(document.documentElement.getAttribute('data-anim')==='off')return;
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  var t=e.target&&e.target.closest&&e.target.closest('button,[data-act],[role=tab],.tab,.chip,.tile,summary,label.chip,a[href]');
+  if(!t||t.disabled)return;
+  var r=document.createElement('i');r.className='tapring';r.style.left=e.clientX+'px';r.style.top=e.clientY+'px';
+  document.body.appendChild(r);setTimeout(function(){if(r.parentNode)r.parentNode.removeChild(r);},520);
+ }catch(x){}
+},true);
 })();
 </script>
 </body>
