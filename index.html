@@ -9768,7 +9768,7 @@ if(T){
  },true);
 })();
 
-/* animasi muncul saat di-scroll: berulang ke atas dan ke bawah */
+/* animasi muncul saat di-scroll: berulang, dihitung dari area yang benar-benar kelihatan */
 (function(){
  if(!('IntersectionObserver' in window))return;
  var SEL='.tile,.stat,.panel,.acc-t,.empty,#hlist>*,[id$="List"]>*,#repBody>*,#dStats>*,.stats>*,.plist>*';
@@ -9777,32 +9777,55 @@ if(T){
  function off(){
   return document.documentElement.getAttribute('data-anim')==='off'||(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches);
  }
- var ioIn=new IntersectionObserver(function(es){
-  var vis=es.filter(function(e){return e.isIntersecting&&e.target.getAttribute('data-rv')==='p';});
-  if(!vis.length)return;
-  vis.sort(function(a,b){return dirUp?b.boundingClientRect.top-a.boundingClientRect.top:a.boundingClientRect.top-b.boundingClientRect.top;});
-  vis.forEach(function(e,i){
-   var el=e.target;
-   el.setAttribute('data-rv','s');
-   el.style.setProperty('--rvy',dirUp?'-24px':'24px');
-   el.style.animationDelay=Math.min(i,6)*45+'ms';
-   el.classList.remove('rv-pre','rv-go');void el.offsetWidth;el.classList.add('rv-go');
-  });
- },{rootMargin:'0px 0px -48px 0px',threshold:0.01});
- var ioOut=new IntersectionObserver(function(es){
-  es.forEach(function(e){
-   var el=e.target;
-   if(e.isIntersecting||el.getAttribute('data-rv')!=='s')return;
-   if(off())return;
-   el.setAttribute('data-rv','p');
-   el.classList.remove('rv-go');el.style.animationDelay='';el.classList.add('rv-pre');
-  });
- },{rootMargin:'0px',threshold:0});
+ /* batas atas (header) dan bawah (menu melayang) yang menutupi isi */
+ function insets(){
+  var t=0,b=0,h=window.innerHeight;
+  try{
+   var tp=document.querySelector('.top');
+   if(tp){var cs=getComputedStyle(tp);if(cs.position==='sticky'||cs.position==='fixed'){t=Math.max(0,Math.round(tp.getBoundingClientRect().bottom));}}
+   var nv=document.getElementById('botNav');
+   if(nv&&getComputedStyle(nv).display!=='none'){var nr=nv.getBoundingClientRect();if(nr.height>0)b=Math.max(0,Math.round(h-nr.top));}
+   var cb=document.querySelector('.cartbar');
+   if(cb&&getComputedStyle(cb).display!=='none'){var cr=cb.getBoundingClientRect();if(cr.height>0)b=Math.max(b,Math.round(h-cr.top));}
+  }catch(e){}
+  return {t:t,b:b};
+ }
+ var ioIn=null,ioOut=null,sig='';
+ function build(){
+  var ins=insets(),k=ins.t+'/'+ins.b;
+  if(k===sig&&ioIn)return false;
+  sig=k;
+  if(ioIn)ioIn.disconnect();if(ioOut)ioOut.disconnect();
+  ioIn=new IntersectionObserver(function(es){
+   var vis=es.filter(function(e){return e.isIntersecting&&e.target.getAttribute('data-rv')==='p';});
+   if(!vis.length)return;
+   vis.sort(function(a,b){return dirUp?b.boundingClientRect.top-a.boundingClientRect.top:a.boundingClientRect.top-b.boundingClientRect.top;});
+   vis.forEach(function(e,i){
+    var el=e.target;
+    el.setAttribute('data-rv','s');
+    el.style.setProperty('--rvy',dirUp?'-24px':'24px');
+    el.style.animationDelay=Math.min(i,5)*40+'ms';
+    el.classList.remove('rv-pre','rv-go');void el.offsetWidth;el.classList.add('rv-go');
+   });
+  },{rootMargin:'-'+ins.t+'px 0px -'+(ins.b+16)+'px 0px',threshold:0.01});
+  ioOut=new IntersectionObserver(function(es){
+   es.forEach(function(e){
+    var el=e.target;
+    if(e.isIntersecting||el.getAttribute('data-rv')!=='s')return;
+    if(off())return;
+    el.setAttribute('data-rv','p');
+    el.classList.remove('rv-go');el.style.animationDelay='';el.classList.add('rv-pre');
+   });
+  },{rootMargin:'-'+ins.t+'px 0px -'+ins.b+'px 0px',threshold:0});
+  [].forEach.call(document.querySelectorAll('[data-rv]'),function(el){ioIn.observe(el);ioOut.observe(el);});
+  return true;
+ }
  var sched=false;
  function scan(){
   sched=false;
   if(off())return;
-  var list=document.querySelectorAll(SEL),h=window.innerHeight;
+  build();
+  var ins=insets(),list=document.querySelectorAll(SEL),h=window.innerHeight;
   for(var i=0;i<list.length;i++){
    var el=list[i];
    if(el.getAttribute('data-rv'))continue;
@@ -9810,13 +9833,14 @@ if(T){
    if(el.closest('#accSheet,#moreSheet,.overlay,.cart-panel,#topWarn,#login,#edGuide'))continue;
    var r=el.getBoundingClientRect();
    if(r.height===0)continue;
-   if(r.top<h-48&&r.bottom>0){el.setAttribute('data-rv','s');}
+   if(r.bottom>ins.t&&r.top<h-ins.b-16){el.setAttribute('data-rv','s');}
    else{el.setAttribute('data-rv','p');el.classList.add('rv-pre');}
    ioIn.observe(el);ioOut.observe(el);
   }
  }
  function q(){if(sched)return;sched=true;requestAnimationFrame(scan);}
  try{new MutationObserver(q).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});}catch(e){}
+ window.addEventListener('resize',function(){sig='';q();});
  setTimeout(q,400);
 })();
 /* cincin dampak saat menekan */
