@@ -1237,7 +1237,7 @@ setTimeout(end,n*1000+2500);
   }
   var canShare=STANDALONE&&detectShare();
   var canShareAny=STANDALONE&&!!navigator.share;
-  var LS='kasirku:v1',APP_VER='63',HB={rpc:false};
+  var LS='kasirku:v1',APP_VER='64',HB={rpc:false};
 
   /* ---------- Tampilan (warna dan mode, per perangkat) ---------- */
   var AC_KEY='kasirku:accent',MD_KEY='kasirku:mode',THEME0=document.documentElement.getAttribute('data-theme');
@@ -1342,14 +1342,40 @@ setTimeout(end,n*1000+2500);
 
   /* ---------- Penyimpanan ---------- */
   function loadLocal(){
+    var raw=null;
     try{
-      var j=JSON.parse(localStorage.getItem(LS)||'null');
-      if(j){S.products=j.products||[];S.store=j.store||{name:''};S.days=j.days||{};S.exp=j.exp||{};S.shifts=j.shifts||{};S.refunds=j.refunds||{};}
-    }catch(e){}
+      raw=localStorage.getItem(LS);
+      if(!raw)return;
+      var j=JSON.parse(raw);
+      var obj=function(v){return !!v&&typeof v==='object'&&!Array.isArray(v);};
+      var valid=obj(j)
+        &&(!('products' in j)||Array.isArray(j.products))
+        &&(!('store' in j)||obj(j.store))
+        &&['days','exp','shifts','refunds'].every(function(k){return !(k in j)||obj(j[k]);});
+      if(!valid)throw new Error('invalid_local_data');
+      S.products=Array.isArray(j.products)?j.products:[];
+      S.store=obj(j.store)?j.store:{name:''};
+      S.days=obj(j.days)?j.days:{};
+      S.exp=obj(j.exp)?j.exp:{};
+      S.shifts=obj(j.shifts)?j.shifts:{};
+      S.refunds=obj(j.refunds)?j.refunds:{};
+    }catch(e){
+      /* Simpan salinan mentah sebelum data yang rusak diabaikan. Jangan menimpa LS di sini. */
+      if(raw){
+        try{
+          if(!localStorage.getItem('kasirku:corrupt:v1'))localStorage.setItem('kasirku:corrupt:v1',raw);
+        }catch(x){}
+      }
+      toast(T('Data lokal tidak dapat dibaca. Salinan darurat dipertahankan bila ruang penyimpanan memungkinkan. Jangan hapus data browser sebelum menghubungi admin.'));
+    }
   }
   function saveLocal(){
-    try{localStorage.setItem(LS,JSON.stringify({products:S.products,store:S.store,days:S.days,exp:S.exp,shifts:S.shifts,refunds:S.refunds}));}
-    catch(e){toast(T('Penyimpanan browser penuh atau diblokir.'));}
+    try{
+      localStorage.setItem(LS,JSON.stringify({products:S.products,store:S.store,days:S.days,exp:S.exp,shifts:S.shifts,refunds:S.refunds}));
+    }catch(e){
+      var quota=e&&(e.name==='QuotaExceededError'||e.code===22||e.code===1014);
+      toast(T(quota?'Penyimpanan penuh. Perubahan terbaru belum tersimpan. Buat cadangan dan kosongkan ruang.':'Penyimpanan browser diblokir. Perubahan terbaru belum tersimpan.'));
+    }
   }
   function fail(e){
     var c=e&&e.code;
