@@ -119,7 +119,7 @@ Kalau HP kamu mengunci putar otomatis tetapi aplikasi tetap berputar, hapus apli
 Aplikasi memakai service worker dengan cache lebih dulu, jadi pembaruan tidak langsung terlihat.
 
 1. Unggah file baru ke repositori ini (timpa file lama).
-2. Buka aplikasinya **dua kali**: pembukaan pertama mengunduh versi baru, pembukaan kedua memakainya.
+2. Setelah GitHub Pages selesai menerbitkan perubahan, buka atau muat ulang aplikasi saat online. Service worker akan mengambil HTML terbaru saat navigasi dan tetap menyediakan versi cache ketika offline.
 
 ## Pintasan keyboard
 
