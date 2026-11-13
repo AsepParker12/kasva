@@ -9886,32 +9886,46 @@ if(T){
  },true);
  sync();
 })();
-/* animasi keluar saat pindah tab */
+/* animasi keluar saat pindah tab (tab tujuan selalu menang, walau diketuk cepat atau tab dibangun ulang) */
 (function(){
- var bypass=false,pending=false;
+ var bypass=false,tm=0,want='',startedOn=null;
  function curView(){return document.querySelector('section[id^="view-"]:not([hidden])');}
+ function tabsEl(){return [].slice.call(document.querySelectorAll('.tabs [role="tab"]'));}
+ function selTab(){return tabsEl().filter(function(t){return t.getAttribute('aria-selected')==='true';})[0];}
+ function fire(){
+  tm=0;
+  var id=want;want='';
+  var v=curView();
+  var t=document.getElementById(id);
+  if(v)v.classList.remove('amv-out');
+  if(!t)return;
+  var c=selTab();
+  if(c&&c.id===id)return;
+  bypass=true;
+  try{t.click();}finally{bypass=false;}
+  /* kalau tetap belum pindah (tab dibangun ulang), coba sekali lagi tanpa animasi */
+  var c2=selTab();
+  if(!c2||c2.id!==id){var t2=document.getElementById(id);if(t2){bypass=true;try{t2.click();}finally{bypass=false;}}}
+ }
  document.addEventListener('click',function(e){
   if(bypass)return;
   var b=e.target&&e.target.closest&&e.target.closest('[data-act="tab"]');
   if(!b)return;
   if(document.documentElement.getAttribute('data-anim')==='off')return;
   if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)return;
-  var tabs=[].slice.call(document.querySelectorAll('.tabs [role="tab"]'));
-  var cur=tabs.filter(function(t){return t.getAttribute('aria-selected')==='true';})[0];
-  if(!cur||cur===b)return;
-  var v=curView();if(!v)return;
+  var cur=selTab();
+  var v=curView();
+  if(!cur||!v)return;
+  if(cur===b&&!tm)return;
   e.preventDefault();e.stopImmediatePropagation();
-  if(pending)return;
-  pending=true;
+  want=b.id;
+  if(cur.id===want&&tm){clearTimeout(tm);tm=0;want='';v.classList.remove('amv-out');return;}
+  if(tm)return;
+  var tabs=tabsEl();
   var dir=tabs.indexOf(b)>tabs.indexOf(cur)?1:-1;
   document.documentElement.style.setProperty('--tdir',(dir*14)+'px');
   v.classList.add('amv-out');
-  setTimeout(function(){
-   bypass=true;
-   try{b.click();}finally{bypass=false;}
-   v.classList.remove('amv-out');
-   pending=false;
-  },150);
+  tm=setTimeout(fire,110);
  },true);
 })();
 
