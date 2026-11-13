@@ -1284,7 +1284,7 @@ setTimeout(end,n*1000+2500);
   }
   var canShare=STANDALONE&&detectShare();
   var canShareAny=STANDALONE&&!!navigator.share;
-  var LS='kasirku:v1',APP_VER='66',HB={rpc:false};
+  var LS='kasirku:v1',APP_VER='67',HB={rpc:false};
 
   /* ---------- Tampilan (warna dan mode, per perangkat) ---------- */
   var AC_KEY='kasirku:accent',MD_KEY='kasirku:mode',THEME0=document.documentElement.getAttribute('data-theme');
@@ -5853,7 +5853,7 @@ setTimeout(end,n*1000+2500);
       var cur=localStorage.getItem(LS);if(cur)localStorage.setItem('kasirku:prev',cur);
       if(all){
         localStorage.removeItem(LS);
-        [HOLD_KEY,BK_KEY].forEach(function(k){try{localStorage.removeItem(k);}catch(e){}});
+        [HOLD_KEY,BK_KEY,'kasirku:accent','kasirku:mode','kasirku:night','kasirku:nightf','kasirku:nightt','kasirku:anim','kasirku:snd','kasirku:sort','kasirku:stay','kasirku:sess','kasva:style','kasva:view','kasva:ori','kasva:font','kasva:lang','kasva:pat','kasva:patFit','kasva:patI','kasva:patImg','kasva:autoprint','kasva:intro'].forEach(function(k){try{localStorage.removeItem(k);}catch(e){}});
       }else{
         var j=JSON.parse(cur||'{}');
         j.days={};j.exp={};j.shifts={};j.refunds={};if(j.store){j.store.kbp=[];j.store.kbc=[];}
