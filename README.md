@@ -89,6 +89,7 @@ Aplikasi kasir (point of sale) berbasis web untuk toko kecil, warung, kafe, dan 
 ### Tampilan dan kenyamanan
 - 15 pilihan warna: terang dan gelap, serta mode malam otomatis
 - Bahasa Indonesia dan English
+- Gaya tampilan **Halus** (bawaan) atau **Pixel** (kotak bertepi tebal, tulisan dan ikon ala game retro), bisa diganti di tab Tema
 - Menu bawah melayang di HP, tab di atas di layar lebar
 - Mode Desktop untuk tablet dan dukungan layar miring
 - Pusat notifikasi (ikon lonceng) dan notifikasi gaya Dynamic Island
