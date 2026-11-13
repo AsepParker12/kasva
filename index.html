@@ -9981,40 +9981,17 @@ document.addEventListener('pointerdown',function(e){
 </script>
 
 <script>
-/* Pintasan desktop Kasva: Ctrl+Alt+angka untuk navigasi, F2 cari, F8 nominal tunai. */
+/* Petunjuk desktop merujuk pintasan bawaan Kasva; tidak mengambil alih tombol keyboard. */
 (function(){
-  if(window.__kasvaDesktopKeys)return;
-  window.__kasvaDesktopKeys=true;
-  function desktop(){return window.matchMedia&&window.matchMedia('(min-width:1100px)').matches;}
   function addHint(){
-    if(!desktop()||document.getElementById('deskKeys'))return;
+    if(!window.matchMedia||!window.matchMedia('(min-width:1000px)').matches||document.getElementById('deskKeys'))return;
     var nav=document.querySelector('.top-in');
     if(!nav)return;
     var box=document.createElement('div');
     box.id='deskKeys';
-    box.innerHTML='<b>Pintasan keyboard</b><div><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>1–9</kbd> Navigasi menu</div><div><kbd>F2</kbd> Cari produk</div><div><kbd>F8</kbd> Nominal tunai</div>';
+    box.innerHTML='<b>Pintasan Kasva</b><div><kbd>Alt</kbd> + <kbd>1–0</kbd> Pindah menu</div><div><kbd>F1</kbd> Semua pintasan</div><div><kbd>F2</kbd> Cari</div><div><kbd>F4</kbd> Cara bayar</div><div><kbd>F7</kbd> Tahan pesanan</div><div><kbd>F9</kbd> Uang pas</div><div style="margin-top:5px">Pintasan lainnya tersedia lewat <kbd>F1</kbd>.</div>';
     nav.appendChild(box);
   }
-  function typing(el){return !!(el&&(el.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)));}
-  document.addEventListener('keydown',function(e){
-    if(!desktop())return;
-    var t=e.target;
-    if(e.ctrlKey&&e.altKey&&/^[1-9]$/.test(e.key)){
-      e.preventDefault();
-      var tabs=[].slice.call(document.querySelectorAll('.tabs [role="tab"]:not([hidden])'));
-      var tab=tabs[Number(e.key)-1];
-      if(tab)tab.click();
-      return;
-    }
-    if(e.altKey||e.ctrlKey||e.metaKey||e.shiftKey||typing(t))return;
-    if(e.key==='F2'){
-      var search=document.getElementById('search');
-      if(search){e.preventDefault();var kasirTab=document.getElementById('tab-kasir');if(kasirTab&&kasirTab.getAttribute('aria-selected')!=='true')kasirTab.click();setTimeout(function(){search.focus();search.select();},0);}
-    }else if(e.key==='F8'){
-      var cash=document.getElementById('cashIn');
-      if(cash&&!cash.disabled){e.preventDefault();cash.focus();cash.select();}
-    }
-  },true);
   addHint();
   window.addEventListener('resize',addHint);
   try{new MutationObserver(addHint).observe(document.body,{childList:true,subtree:true});}catch(e){}
