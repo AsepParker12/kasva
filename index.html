@@ -2088,6 +2088,27 @@ setTimeout(end,n*1000+2500);
     renderShift();renderDash();renderAkun();
     updateBar();
   }
+  var CHUNK=60,chunkIO=null;
+  function chunkMore(el){
+    var rows=el._rows;if(!rows)return;
+    var s0=el.querySelector(':scope>.more-s');if(s0)s0.remove();
+    var n=el._n||0,nx=Math.min(rows.length,n+CHUNK);
+    el.insertAdjacentHTML('beforeend',rows.slice(n,nx).join(''));
+    el._n=nx;
+    if(nx<rows.length){
+      var sn=document.createElement('div');sn.className='more-s';sn.style.cssText='grid-column:1/-1;height:40px;pointer-events:none';
+      el.appendChild(sn);
+      if('IntersectionObserver' in window){
+        if(!chunkIO)chunkIO=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){chunkIO.unobserve(en.target);var host=en.target.parentNode;if(host)chunkMore(host);}});},{rootMargin:'900px 0px'});
+        chunkIO.observe(sn);
+      }else chunkMore(el);
+    }
+  }
+  function chunkFill(el,rows){
+    if(!el)return;
+    el._rows=rows;el._n=0;el.innerHTML='';
+    chunkMore(el);
+  }
   function renderGrid(){
     syncBundles();
     var g=$('#grid'),chips=$('#chips');
@@ -2112,13 +2133,13 @@ setTimeout(end,n*1000+2500);
     var q=S.q.trim().toLowerCase();
     var shown=list.filter(function(p){return (!isBun(p)||bunVisible(p))&&(S.cat==='Semua'||p.cat===S.cat)&&(!q||String(p.name).toLowerCase().indexOf(q)>=0||String(p.barcode||'').indexOf(q)>=0);});
     if(!shown.length){g.innerHTML=('<div class="empty">'+T('Tidak ada produk yang cocok.')+'</div>');return;}
-    g.innerHTML=shown.map(function(p){
+    chunkFill(g,shown.map(function(p){
       var qty=S.cart[p.id]||0,out=hasStock(p)&&p.stock<=0;
       return '<div class="tile" data-id="'+esc(p.id)+'" style="--h:'+hue(String(p.name))+'">'+(hasPd(p)?'<span class="dbadge">'+(p.dm==='pct'?(Math.min(Number(p.dv)||0,100)+'%'):((T('Hemat')+' ')+fmt(pdUnit(p))))+'</span>':(pmFor(p)?'<span class="dbadge">'+pmFor(p).p+'%</span>':''))+'<button class="tile-main" type="button" data-act="add"'+(out?' disabled':'')+' data-id="'+esc(p.id)+'" aria-label="'+esc(p.name)+', '+rp(p.price)+'">'
         +'<div class="pic">'+pic(p)+'</div>'
                 +'<div class="meta"><span class="nm">'+esc(p.name)+'</span><span class="pr">'+(p.op?T('Seikhlasnya'):rp(p.price))+'</span>'+(hasPd(p)?'<span class="stk" style="color:var(--accent)">'+esc(pdText(p))+'</span>':'')+stkTag(p)+'</div></button>'
         +'<div class="tctl"'+(qty?'':' hidden')+'><button type="button" data-act="dec" data-id="'+esc(p.id)+'" aria-label="Kurangi '+esc(p.name)+'">−</button><b data-act="qty" data-id="'+esc(p.id)+'" role="button" tabindex="0" aria-label="Ketik jumlah '+esc(p.name)+'">'+qty+'</b><button type="button" data-act="inc" data-id="'+esc(p.id)+'" aria-label="Tambah '+esc(p.name)+'">+</button></div>'+unitBtns(p)+'</div>';
-    }).join('');
+    }));
   }
   function updateBadges(){
     document.querySelectorAll('.tile').forEach(function(t){
@@ -2201,11 +2222,11 @@ setTimeout(end,n*1000+2500);
     if(lowL.length)lb.innerHTML='<p><b>'+lowL.length+(' '+T('produk stok menipis atau habis:')+'</b> ')+lowL.slice(0,6).map(function(p){return esc(p.name)+' ('+p.stock+')';}).join(', ')+(lowL.length>6?T(', dan lainnya'):'')+'.</p>';
     var pq=String(S.pq||'').trim().toLowerCase();
     var shownP=pq?list.filter(function(p){return String(p.name).toLowerCase().indexOf(pq)>=0||String(p.barcode||'').indexOf(pq)>=0||String(p.cat||'').toLowerCase().indexOf(pq)>=0;}):list;
-    $('#plist').innerHTML=shownP.length?shownP.map(function(p){
+    chunkFill($('#plist'),shownP.length?shownP.map(function(p){
       return '<div class="prow" style="--h:'+hue(String(p.name))+'"><div class="th"><div class="pic">'+pic(p)+'</div></div>'
         +'<div class="info"><div class="nm">'+esc(p.name)+'</div><div class="sub">'+(p.op?T('Harga bebas, diisi kasir saat transaksi'):(T('Jual')+' ')+rp(p.price)+(hasCost(p)?(' '+T('· Modal')+' ')+rp(p.cost):(' '+T('· Modal belum diisi'))))+'</div><div class="sub">'+(hasStock(p)?(T('Stok')+' ')+p.stock:T('Stok tidak dihitung'))+(p.cat?' · '+esc(p.cat):'')+(p.barcode?' · '+esc(p.barcode):'')+'</div>'+((p.units&&p.units.length)?('<div class="sub">'+T('Satuan:')+' ')+p.units.map(function(u){return esc(u.n)+(' '+T('isi')+' ')+u.q+' = '+rp(u.p);}).join(', ')+'</div>':'')+'</div>'
         +'<div class="pacts">'+(p.op||isBun(p)?'':'<button class="btn small" type="button" data-act="stkAdd" data-id="'+esc(p.id)+('">'+T('+ Stok')+'</button>'))+'<button class="btn small" type="button" data-act="editProd" data-id="'+esc(p.id)+('">'+T('Ubah')+'</button></div></div>');
-    }).join(''):'<div class="empty">'+(S.mode==='loading'?T('Memuat produk…'):(list.length?T('Tidak ada produk yang cocok.'):T('Belum ada produk. Ketuk Tambah produk.')))+'</div>';
+    }):['<div class="empty">'+(S.mode==='loading'?T('Memuat produk…'):(list.length?T('Tidak ada produk yang cocok.'):T('Belum ada produk. Ketuk Tambah produk.')))+'</div>']);
   }
   function renderHistory(){
     if(!can('history.own'))return;
@@ -5864,9 +5885,11 @@ setTimeout(end,n*1000+2500);
     location.reload();
   }
   function renderBk(){
-    renderRs();renderTh();renderSh();renderHbSet();
-    var el=$('#bkBox');if(!el)return;
-    el.innerHTML=('<p class="hint" style="margin:0 0 10px">'+T('Simpan semua data ke satu file di HP.')+' ')+esc(bkLastText())+'</p>'
+    var el=$('#bkBox');
+    [renderRs,renderTh,renderSh,renderHbSet].forEach(function(f){try{f();}catch(e){try{console.error(e);}catch(x){}}});
+    if(!el)return;
+    var lastTxt='';try{lastTxt=bkLastText();}catch(e){}
+    el.innerHTML=('<p class="hint" style="margin:0 0 10px">'+T('Simpan semua data ke satu file di HP.')+' ')+esc(lastTxt)+'</p>'
       +('<div class="modal-actions"><button class="btn primary grow" type="button" data-act="bkSave">'+T('Cadangkan data')+'</button>')
       +(canBkShare()?('<button class="btn grow" type="button" data-act="bkShare">'+T('Bagikan (WA/Drive)')+'</button>'):'')
       +(STANDALONE?('<button class="btn grow" type="button" data-act="bkPick">'+T('Pulihkan dari file')+'</button>'):'')+'</div>'
